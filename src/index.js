@@ -22,14 +22,12 @@ const listPrioritySelect = Array.from(document.querySelector('#active-list-nav')
 
 addEventListerners();
 loadAndGenerateStorage();
-//removeAll();
 
 function loadAndGenerateStorage() {
     list = generateListFromStorageOutput(loadLocalStorage('list'));
     let container;
     if(list.length > 0){
         list.forEach(element => {
-            //console.log(element);
             container = addList(element.priority, element.title, element.date);
             container.addEventListener('click', taskListAddEventListener);
             container.querySelector('button').addEventListener('click', navDeleteList);
@@ -41,8 +39,6 @@ function loadAndGenerateStorage() {
     else {
         list = [];
     }
-
-    console.table(list);
     
 }
 
@@ -52,8 +48,9 @@ function generateListFromStorageOutput(output) {
         output.forEach((element) => {
             tempList.push(new ListItem(element.title, element.priority, element.id, element.date));
             element.tasks.forEach(el => {
-                tempList[tempList.length -1].addNewTask(el.title, el.priority, el.id);
+                tempList[tempList.length -1].addNewTask(el.title, el.priority, el.id, el.done);
                 tempList[tempList.length -1].setTaskDescription(el.description.description, tempList[tempList.length -1].tasks.length -1);
+
             });
         });
     }
@@ -148,14 +145,12 @@ function addEventListerners(){
 
 function navDeleteList(ev) {
     ev.stopPropagation();
-    console.table(list);
     const parent = ev.target.parentNode;
     removeListById(parent.getAttribute('data-index'));
     removeList(parent);
     
     const allLists = document.querySelectorAll('.task-list-container');
-
-    console.log(allLists);
+;
     if(allLists.length > 0){
         allLists.forEach((e) => {
             e.classList.remove('active');
@@ -169,7 +164,6 @@ function navDeleteList(ev) {
             removeDescription();
         }
     }
-    console.table(list);
     if(list.length === 0){
         removeListTasks();
         removeDescription();
@@ -186,7 +180,6 @@ function removeListById(id){
 }
 
 function removeTaskById(listId, taskId){
-    //console.log(`list index: ${listId}, taskId: ${taskId}`);
     for(let i = 0; i < list[listId].tasks.length; i++){
         if(taskId == list[listId].tasks[i].id){
             list[listId].tasks.splice(i,1);
@@ -320,6 +313,13 @@ function loadTasks(taskList) {
         const btns = container.querySelectorAll('button');
         btns[0].addEventListener('click', taskDoneEvent);
         btns[1].addEventListener('click', deleteTask);
+
+        if(task.done === true){
+            container.querySelector('p').style.textDecoration = 'line-through';
+        }
+        else {
+            container.querySelector('p').style.textDecoration = 'none';
+        }
     });
 }
 
@@ -360,6 +360,8 @@ function taskDoneEvent(ev) {
             setListAsDone();
         }
     });
+
+    setLocalStorage(list);
 }
 
 function setListAsDone() {
@@ -372,7 +374,6 @@ function setListAsDone() {
     });
     const container = returnActiveListElement();
 
-    console.log(container);
     if(!notDone){
         container.querySelector('p').style.textDecoration = 'none';
     }

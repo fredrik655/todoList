@@ -11,8 +11,8 @@ class ListItem {
 
     
 
-    addNewTask(taskTitle, taskPriority, taskId) {
-        this.tasks.push(new TaskItem(taskTitle, taskPriority, taskId));
+    addNewTask(taskTitle, taskPriority, taskId, taskDone = false) {
+        this.tasks.push(new TaskItem(taskTitle, taskPriority, taskId, taskDone));
     };
 
     setTaskDescription(descriptionText, index) {
@@ -40,12 +40,12 @@ class ListItem {
 }
 
 class TaskItem {
-    constructor(title, priority, id){
+    constructor(title, priority, id, taskDone = false){
         this.title = title;
         this.priority = priority;
         this.id = id;
         this.description =  {title: '', description: '',};
-        this.done = false;
+        this.done = taskDone;
     }
 
     setDone() {
